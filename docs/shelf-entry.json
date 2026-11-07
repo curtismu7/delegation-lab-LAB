@@ -4,7 +4,7 @@
       "id": "delegation-lab",
       "name": "Delegation Lab",
       "kind": "Demo",
-      "description": "Consent mints a delegated token with act={agent}; the gateway validates the chain (actor allow-list, never an upstream audience). Directory groups are read on EVERY decision: outside the required group is denied regardless of scopes; the premium group expands tools and ceiling. Mock of UC1/UC9/UC9A/UC21.",
+      "description": "Consent mints a delegated token with act={agent}; the gateway validates the chain (actor allow-list, never an upstream audience). Directory groups are read EVERY decision: outside the required group is denied regardless of scopes; the premium group expands tools and ceiling. Mock of UC1/UC9/UC9A/UC21.",
       "url": "http://localhost:7690",
       "healthPath": "/api/health",
       "composeFile": "delegation-lab/docker-compose.yml",
