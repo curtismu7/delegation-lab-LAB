@@ -1,0 +1,28 @@
+{
+  "name": "delegation-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Delegation Lab: an agent's money movement gated by a mock authorization policy \u2014 amount bands (PERMIT / HITL consent / MFA step-up / DENY) plus CIBA out-of-band approval on the user's own device. Standalone mock of the AI-DEMO2 HITL track (UC7/UC8/UC22).",
+  "license": "MIT",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "engines": {
+    "node": ">=26"
+  },
+  "scripts": {
+    "start": "npm start -w server",
+    "build": "npm run build -w web",
+    "test": "npm test -w server && npm test -w web && node --test scripts/*.test.mjs",
+    "doctor": "node scripts/doctor.mjs",
+    "reset": "node scripts/reset.mjs",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "talk-track": "node scripts/build-talk-track.mjs",
+    "content-pack": "node scripts/build-content-pack.mjs && node scripts/validate-content-pack.mjs"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0"
+  }
+}

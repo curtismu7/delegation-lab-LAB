@@ -1,0 +1,209 @@
+{
+  "schema": "demo-content-pack/1",
+  "id": "delegation-lab",
+  "title": "Delegation Lab",
+  "version": "0.1.0",
+  "demo": {
+    "id": "delegation-lab",
+    "name": "Delegation Lab",
+    "catalog": "D999",
+    "baseUrl": "http://localhost:7690",
+    "doctor": "/api/health",
+    "tags": [
+      "delegation",
+      "entitlement",
+      "authorize",
+      "oauth",
+      "policy",
+      "mock-only"
+    ]
+  },
+  "glossary": [
+    {
+      "id": "delegation",
+      "term": "Delegated token (act claim)",
+      "definition": "After user consent, RFC 8693 token exchange mints a delegated token: sub is the USER, act={sub: agent} names the actor. Every action traces back to a real human — a chain of custody, not guesswork.",
+      "aliases": [
+        "token exchange",
+        "act claim"
+      ]
+    },
+    {
+      "id": "entitlement",
+      "term": "Group entitlement & tiers",
+      "definition": "The policy reads directory groups on EVERY decision: a user outside the required group is denied regardless of scopes, and the premium group EXPANDS capability (restricted tools + a higher amount ceiling). Promotion is instant — no code change, no redeploy.",
+      "aliases": [
+        "group gate",
+        "tier"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "mcp-tools",
+      "title": "Model Context Protocol: tools/call",
+      "url": "https://modelcontextprotocol.io/docs/concepts/tools",
+      "kind": "standard",
+      "use": "The JSON-RPC tool-call shape the transfer gate scopes.",
+      "status": "not-read",
+      "checked": "2026-11-06"
+    }
+  ],
+  "cards": [
+    {
+      "id": "try-consent-delegation",
+      "label": "Scenario 1: UC1: consent mints act={agent}, the balance read permits",
+      "description": "The user consented; the delegated token carries sub=user, act={agent}. The chain validates and the entitled read permits — fully attributable.",
+      "group": "try-it",
+      "action": {
+        "type": "route",
+        "href": "/#scenario-consent-delegation"
+      },
+      "terms": [
+        "delegation"
+      ],
+      "story": "S01"
+    },
+    {
+      "id": "try-actor-allowlist",
+      "label": "Scenario 2: ROGUE ACTOR: an unknown agent is refused at the gateway",
+      "description": "The actor allow-list: act.sub must name a registered agent. An unauthorized actor is refused before the policy is even consulted (the app fixed this check being dead code).",
+      "group": "try-it",
+      "action": {
+        "type": "route",
+        "href": "/#scenario-actor-allowlist"
+      },
+      "terms": [
+        "delegation"
+      ],
+      "story": "S02"
+    },
+    {
+      "id": "try-group-entitlement",
+      "label": "Scenario 3: UC9: not in the required group — denied regardless of scopes",
+      "description": "The group gate fires first: a user outside the required group is denied no matter what the token carries. The directory groups are read on every decision.",
+      "group": "try-it",
+      "action": {
+        "type": "route",
+        "href": "/#scenario-group-entitlement"
+      },
+      "terms": [
+        "entitlement"
+      ],
+      "story": "S03"
+    },
+    {
+      "id": "try-live-flip",
+      "label": "Scenario 4: UC9A: flip the directory entry, the very next call moves",
+      "description": "Live directory: the first call denies; flip the directory entry; the identical call now permits — no code change, no cache, no re-login.",
+      "group": "try-it",
+      "action": {
+        "type": "route",
+        "href": "/#scenario-live-flip"
+      },
+      "terms": [
+        "entitlement"
+      ],
+      "story": "S04"
+    },
+    {
+      "id": "try-tier-tool",
+      "label": "Scenario 5: UC21: Standard tier cannot invoke the premium wire",
+      "description": "Positive least privilege: the premium-only tool is denied for a non-Premium user with a distinct reason — the agent of a Standard user is not even offered it.",
+      "group": "try-it",
+      "action": {
+        "type": "route",
+        "href": "/#scenario-tier-tool"
+      },
+      "terms": [
+        "entitlement"
+      ],
+      "story": "S05"
+    },
+    {
+      "id": "try-tier-promote",
+      "label": "Scenario 6: UC21: promote to Premium — the same call now permits",
+      "description": "Directory-driven tiers: adding the premiumTier group instantly expands the tool set and raises the ceiling to $50000. Policy-driven, not hard-coded.",
+      "group": "try-it",
+      "action": {
+        "type": "route",
+        "href": "/#scenario-tier-promote"
+      },
+      "terms": [
+        "entitlement"
+      ],
+      "story": "S06"
+    },
+    {
+      "id": "try-tier-ceiling",
+      "label": "Scenario 7: UC21: $60000 exceeds even the Premium ceiling",
+      "description": "The tier ceiling applies to Premium too: $60000 exceeds $50000 and is denied with tier_amount_exceeded — capability expanded, still bounded.",
+      "group": "try-it",
+      "action": {
+        "type": "route",
+        "href": "/#scenario-tier-ceiling"
+      },
+      "terms": [
+        "entitlement"
+      ],
+      "story": "S07"
+    },
+    {
+      "id": "concept-editor",
+      "label": "Reconfigure the policy live",
+      "description": "Change the amount bands live; the SAME call flips on the next run — a crossing edit falls back to the defaults, never wider.",
+      "group": "concept",
+      "action": {
+        "type": "route",
+        "href": "/#policy"
+      }
+    },
+    {
+      "id": "ref-doctor",
+      "label": "Doctor and health",
+      "description": "Preflight checks and the demo-health/1 endpoint.",
+      "group": "setup",
+      "action": {
+        "type": "route",
+        "href": "/api/health"
+      }
+    }
+  ],
+  "stories": [
+    {
+      "id": "S01",
+      "title": "UC1: consent mints act={agent}, the balance read permits",
+      "say": "The user consented; the delegated token carries sub=user, act={agent}. The chain validates and the entitled read permits — fully attributable."
+    },
+    {
+      "id": "S02",
+      "title": "ROGUE ACTOR: an unknown agent is refused at the gateway",
+      "say": "The actor allow-list: act.sub must name a registered agent. An unauthorized actor is refused before the policy is even consulted (the app fixed this check being dead code)."
+    },
+    {
+      "id": "S03",
+      "title": "UC9: not in the required group — denied regardless of scopes",
+      "say": "The group gate fires first: a user outside the required group is denied no matter what the token carries. The directory groups are read on every decision."
+    },
+    {
+      "id": "S04",
+      "title": "UC9A: flip the directory entry, the very next call moves",
+      "say": "Live directory: the first call denies; flip the directory entry; the identical call now permits — no code change, no cache, no re-login."
+    },
+    {
+      "id": "S05",
+      "title": "UC21: Standard tier cannot invoke the premium wire",
+      "say": "Positive least privilege: the premium-only tool is denied for a non-Premium user with a distinct reason — the agent of a Standard user is not even offered it."
+    },
+    {
+      "id": "S06",
+      "title": "UC21: promote to Premium — the same call now permits",
+      "say": "Directory-driven tiers: adding the premiumTier group instantly expands the tool set and raises the ceiling to $50000. Policy-driven, not hard-coded."
+    },
+    {
+      "id": "S07",
+      "title": "UC21: $60000 exceeds even the Premium ceiling",
+      "say": "The tier ceiling applies to Premium too: $60000 exceeds $50000 and is denied with tier_amount_exceeded — capability expanded, still bounded."
+    }
+  ]
+}

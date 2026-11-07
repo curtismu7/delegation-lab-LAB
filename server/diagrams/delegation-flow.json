@@ -1,0 +1,153 @@
+{
+  "schema": "diagram-studio/1",
+  "id": "delegation-flow",
+  "title": "Delegation & entitlement: consent to attributable action",
+  "lede": "The user consents; token exchange mints a delegated token carrying act={agent}; the gateway validates the chain (actor allow-list, no upstream audience); the policy decides by group entitlement and tier — the directory decides, not the token. Mock only.",
+  "groups": {
+    "actor": {
+      "label": "Actors",
+      "color": "dark"
+    },
+    "policy": {
+      "label": "Policy (mock)",
+      "color": "red"
+    },
+    "human": {
+      "label": "The human",
+      "color": "blue"
+    },
+    "resource": {
+      "label": "Resources",
+      "color": "grey"
+    }
+  },
+  "nodes": [
+    {
+      "id": "user",
+      "label": "User (consents once)",
+      "group": "human",
+      "x": 0,
+      "y": 80
+    },
+    {
+      "id": "idp",
+      "label": "Token exchange (RFC 8693): act={agent}",
+      "group": "policy",
+      "x": 300,
+      "y": 80
+    },
+    {
+      "id": "agent",
+      "label": "AI agent (the actor)",
+      "group": "actor",
+      "x": 0,
+      "y": 240
+    },
+    {
+      "id": "gateway",
+      "label": "Gateway: chain + actor allow-list",
+      "group": "policy",
+      "x": 300,
+      "y": 240
+    },
+    {
+      "id": "authz",
+      "label": "Policy: group gate then tier ceiling",
+      "group": "policy",
+      "x": 600,
+      "y": 240
+    },
+    {
+      "id": "directory",
+      "label": "Directory (live membership)",
+      "group": "policy",
+      "x": 600,
+      "y": 80
+    },
+    {
+      "id": "tool",
+      "label": "Tool executes (attributable)",
+      "group": "resource",
+      "x": 900,
+      "y": 240
+    }
+  ],
+  "edges": [
+    {
+      "source": "user",
+      "target": "idp",
+      "label": "consent"
+    },
+    {
+      "source": "idp",
+      "target": "agent",
+      "label": "delegated token: sub=user, act={agent}"
+    },
+    {
+      "source": "agent",
+      "target": "gateway",
+      "label": "tools/call with the delegated token"
+    },
+    {
+      "source": "gateway",
+      "target": "authz",
+      "label": "chain valid: authorize"
+    },
+    {
+      "source": "authz",
+      "target": "directory",
+      "label": "group + tier read, every decision"
+    },
+    {
+      "source": "authz",
+      "target": "tool",
+      "label": "PERMIT: dispatch"
+    },
+    {
+      "source": "authz",
+      "target": "agent",
+      "label": "DENY: not in group / over tier ceiling",
+      "dashed": true
+    }
+  ],
+  "steps": [
+    {
+      "title": "The user consents",
+      "what": "One consent: token exchange mints a delegated token — sub is the USER, act={agent} names the actor. Every action traces back to a real human.",
+      "edges": [
+        0,
+        1
+      ]
+    },
+    {
+      "title": "The gateway validates the chain",
+      "what": "sub/aud/exp first; then the act chain — act.sub non-empty, the actor on the allow-list, and never an upstream MCP-server audience.",
+      "edges": [
+        2,
+        3
+      ]
+    },
+    {
+      "title": "The policy reads the directory",
+      "what": "Group membership and tier are read for EVERY decision — not baked into the token. Flip the membership and the very next call moves.",
+      "edges": [
+        4
+      ]
+    },
+    {
+      "title": "Entitlement decides",
+      "what": "Not in the required group: DENY regardless of scopes. In the premium group: the tool set and amount ceiling expand — positive least privilege.",
+      "edges": [
+        4,
+        6
+      ]
+    },
+    {
+      "title": "Attributable dispatch",
+      "what": "PERMIT dispatches the tool with the full chain: user → act={agent} → decision. Audit gets a chain of custody, not guesswork.",
+      "edges": [
+        5
+      ]
+    }
+  ]
+}
