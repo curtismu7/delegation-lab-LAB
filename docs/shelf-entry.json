@@ -7,7 +7,7 @@
       "description": "Consent mints a delegated token with act={agent}; the gateway validates the chain (actor allow-list, no upstream audience). Directory groups are read EVERY decision: outside the group is denied regardless of scopes; premium expands tools and ceiling. Mock of UC1/UC9/UC9A/UC21.",
       "url": "http://localhost:7690",
       "healthPath": "/api/health",
-      "composeFile": "delegation-lab/docker-compose.yml",
+      "composeFile": "delegation-lab-LAB/docker-compose.yml",
       "composeOverlays": [],
       "pingProducts": [],
       "notes": "Host-run: ./scripts/run.sh (port 7690). Mock needs no tenant and no credentials. Docker: HOST_PORT=7690 docker compose up --build -d (published on 127.0.0.1 only). The decision contract mirrors the AI-DEMO2 agentMcpTokenService + GatewayTokenPolicy + the simulatedAuthorizeService tier guard, enforced live 2026-11-06. Repo: curtismu7/delegation-lab-LAB. Catalog id D120 (assigned 2026-11-06).",
