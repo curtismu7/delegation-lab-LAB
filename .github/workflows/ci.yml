@@ -42,4 +42,5 @@ jobs:
           echo "forbidden-string hits: $hits"
           [ "$hits" = "0" ]
       - name: No AI attribution
+        if: ${{ !cancelled() }}
         run: bash scripts/check-no-ai-attribution.sh
