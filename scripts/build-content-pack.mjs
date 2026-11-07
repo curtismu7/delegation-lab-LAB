@@ -18,7 +18,7 @@ export function buildPack() {
     id: 'delegation-lab',
     title: 'Delegation Lab',
     version,
-    demo: { id: 'delegation-lab', name: 'Delegation Lab', catalog: 'D999', baseUrl: 'http://localhost:7690', doctor: '/api/health', tags: ['delegation', 'entitlement', 'authorize', 'oauth', 'policy', 'mock-only'] },
+    demo: { id: 'delegation-lab', name: 'Delegation Lab', catalog: 'D120', baseUrl: 'http://localhost:7690', doctor: '/api/health', tags: ['delegation', 'entitlement', 'authorize', 'oauth', 'policy', 'mock-only'] },
     glossary: [
       { id: 'delegation', term: 'Delegated token (act claim)', definition: 'After user consent, RFC 8693 token exchange mints a delegated token: sub is the USER, act={sub: agent} names the actor. Every action traces back to a real human — a chain of custody, not guesswork.', aliases: ['token exchange', 'act claim'] },
       { id: 'entitlement', term: 'Group entitlement & tiers', definition: 'The policy reads directory groups on EVERY decision: a user outside the required group is denied regardless of scopes, and the premium group EXPANDS capability (restricted tools + a higher amount ceiling). Promotion is instant — no code change, no redeploy.', aliases: ['group gate', 'tier'] },

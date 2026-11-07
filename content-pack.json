@@ -6,7 +6,7 @@
   "demo": {
     "id": "delegation-lab",
     "name": "Delegation Lab",
-    "catalog": "D999",
+    "catalog": "D120",
     "baseUrl": "http://localhost:7690",
     "doctor": "/api/health",
     "tags": [

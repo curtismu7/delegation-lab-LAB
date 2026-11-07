@@ -12,6 +12,8 @@ Mock + Real (rule 19): Mock is fully offline (mock gate, mock MFA, mock CIBA). R
 
 Scaffold copied from mcp-gateway-lab-LAB (fork rule 4 attribution); every surface here is this lab's own. No cross-repo imports.
 
+Scaffold copied from hitl-mfa-lab-LAB (fork rule 4 attribution); every surface here is this lab's own. No cross-repo imports.
+
 ## Run it
 
 - `./scripts/run.sh` — host-run on port 7680 (Node >= 26), opens the browser.
