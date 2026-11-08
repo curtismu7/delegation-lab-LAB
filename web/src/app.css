@@ -72,3 +72,8 @@ details { margin: 6px 0; } summary { cursor: pointer; font-size: var(--font-size
 .pat__title { margin: 0 0 4px; font-size: var(--font-size-lg); }
 .app--presenter { font-size: 18px; } .app--presenter .panel h2 { font-size: var(--font-size-xl); } .app--presenter .lesson, .app--presenter .presenter-say, .app--presenter .verdict__reasons { font-size: var(--font-size-lg); }
 .app--presenter .json, .app--presenter .tbl { font-size: var(--font-size-base); }
+
+/* Shelf button (the launcher link, ShelfLink.jsx). This app has no shared standalone-ui.css yet, so the rule is written here with the app's own tokens. */
+.shelf-link { display: inline-flex; align-items: center; min-height: 32px; padding: 6px 12px; border: 1px solid var(--th-border-strong); border-radius: var(--btn-radius); background: var(--th-bg-card); color: var(--th-text); font: inherit; font-size: var(--font-size-sm); font-weight: 600; text-decoration: none; }
+.shelf-link:hover { background: var(--th-bg-hover); border-color: var(--th-accent); }
+.shelf-link:focus-visible { outline: 2px solid var(--th-status-info); outline-offset: 2px; }

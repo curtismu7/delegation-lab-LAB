@@ -18,6 +18,7 @@ import {
 } from './delegation.js';
 import { buildHops, newTrace } from './trace.js';
 import { createWorkspaces, workspaceFrom } from './workspaces.js';
+import { mountShelfRoute } from './shelfLink.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WEB_DIST = process.env.WEB_DIST || path.resolve(HERE, '../../web/dist');
@@ -30,6 +31,7 @@ export function createApp({
   health = createHealth(), configFile = CONFIG, hosted = false,
   workspaces = createWorkspaces(),
   directory = createDirectory({ members: ['demoUser', 'premiumUser'] }),
+  env = process.env,
 } = {}) {
   const app = express();
   app.disable('x-powered-by');
@@ -146,6 +148,8 @@ export function createApp({
     workspaces.resetWorkspace(ws);
     res.json({ reset: 'ok', workspace: ws });
   }));
+  // The header "Shelf" button: GET /api/shelf. Before the 404 handler and outside the web-build check, so it answers without a build.
+  mountShelfRoute(api, { env });
   api.use((_req, res) => res.status(404).json({ error: 'not_found' }));
   app.use('/api', api);
   // Errors become short JSON. Express's default handler would send an HTML stack trace with absolute file paths.

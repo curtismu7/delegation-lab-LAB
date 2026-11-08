@@ -5,6 +5,17 @@ import os from 'node:os';
 import path from 'node:path';
 import { rawHttp, withServer } from './helpers.js';
 
+test('GET /api/shelf returns the configured SHELF_URL with no web build (trailing slash trimmed), and a POST to it is not 200', async () => {
+  await withServer(async (url) => {
+    const res = await fetch(`${url}/api/shelf`);
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get('cache-control'), 'no-store');
+    assert.deepEqual(await res.json(), { shelfUrl: 'https://shelf.example:8443' });
+    const post = await fetch(`${url}/api/shelf`, { method: 'POST', headers: { 'content-type': 'application/json', origin: url }, body: '{}' });
+    assert.notEqual(post.status, 200);
+  }, { env: { SHELF_URL: 'https://shelf.example:8443/' } });
+});
+
 test('GET /api/health answers demo-health/1, ready and offline', async () => {
   await withServer(async (url) => {
     const r = await fetch(`${url}/api/health`);
