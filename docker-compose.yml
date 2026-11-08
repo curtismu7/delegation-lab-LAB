@@ -5,6 +5,7 @@ name: delegation-lab
 
 services:
   delegation-lab:
+    restart: unless-stopped
     build: .
     ports:
       - "127.0.0.1:${HOST_PORT:-7690}:7690"
