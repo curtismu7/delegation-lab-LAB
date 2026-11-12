@@ -50,7 +50,7 @@ describe("hand-off from Customer Agent LAB", () => {
     const note = screen.getByRole("note", NOTE);
     expect(note.textContent).toContain("UC9A");
     expect(screen.getByTestId("banner").nextElementSibling).toBe(note);
-    expect(document.querySelector(".head__tools > button.return-link--header")).not.toBeNull();
+    expect(document.querySelector(".head__tools .top-menu button.return-link--header")).not.toBeNull();
     expect(screen.getAllByRole("button", { name: /Back to Customer Agent LAB/ })).toHaveLength(2);
     await waitFor(() => expect(screen.getByTestId("pg").textContent).toBe("live-flip"));
     expect(calls).toContain("/api/scenarios?vertical=finance");
