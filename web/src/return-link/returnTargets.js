@@ -22,6 +22,11 @@ export const RETURN_TARGETS = Object.freeze({
     proxyPath: '/ai-demo-standalone/',
     directUrl: 'http://127.0.0.1:7810/',
   }),
+  'appfire-agent-governance': Object.freeze({
+    label: 'Appfire Agent Governance LAB',
+    proxyPath: '/appfire-agent-governance/',
+    directUrl: 'http://127.0.0.1:7814/',
+  }),
 });
 
 const ID = /^[A-Za-z0-9.-]{1,40}$/;
