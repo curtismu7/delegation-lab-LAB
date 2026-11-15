@@ -3,6 +3,7 @@ import PolicyGate from "./components/PolicyGate";
 import DiagramTab from "./components/DiagramTab";
 import TalkTrack from "./components/TalkTrack";
 import ShelfLink from "./components/ShelfLink";
+import VerifyMark from "./components/VerifyMark.jsx";
 import TopMenu from "./top-menu/TopMenu";
 import ReturnLink from "./return-link/ReturnLink.jsx";
 import { readReturnContext } from "./return-link/returnTargets.js";
@@ -114,6 +115,7 @@ export default function App() {
             >
               <ReturnLink app="delegation-lab" variant="header" />
               <ShelfLink />
+              <VerifyMark id="delegation-lab" />
             </TopMenu>
           </div>
         </div>
