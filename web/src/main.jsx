@@ -5,6 +5,7 @@ import "./standalone-ui.css";
 import "./components/JsonPane.css";
 import "./top-menu/top-menu.css";
 import "./tokens.css";
+import "./components/JsonPane.css";
 import "./app.css";
 
 createRoot(document.getElementById("root")).render(<App />);

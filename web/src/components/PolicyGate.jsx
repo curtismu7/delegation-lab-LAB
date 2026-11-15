@@ -6,6 +6,19 @@ import { visible } from "../safeText";
 const STATUS_CLASS = { measured: "tag tag--ok", inferred: "tag", UNVERIFIED: "tag tag--warn" };
 const DEMO_AGENT = "demo-agent";
 
+// A hop is HTTP-style text: headers, a blank line, then (on the agent call) a JSON-RPC body. The body goes through Json (Form | JSON); the rest stays text.
+function HopText({ text, label }) {
+  const at = text.indexOf("\n\n");
+  const body = at < 0 ? "" : text.slice(at + 2).trim();
+  if (!/^[{[]/.test(body)) return <Json value={text} label={label} />;
+  return (
+    <>
+      <Json value={text.slice(0, at)} label={`${label}, headers`} />
+      <Json value={body} label={`${label}, body`} hot={["method", "name", "amount"]} />
+    </>
+  );
+}
+
 export function Hops({ hops, traceId }) {
   return (
     <section aria-label="Mock hops with traceparent" data-testid="hops">
@@ -13,8 +26,8 @@ export function Hops({ hops, traceId }) {
       {hops.map((h) => (
         <details key={h.n} open={h.n === 1}>
           <summary>{h.n}. {h.label}</summary>
-          <p className="muted">Request</p><Json value={h.request} label={`Request of hop ${h.n}`} />
-          <p className="muted">Response</p><Json value={h.response} label={`Response of hop ${h.n}`} />
+          <p className="muted">Request</p><HopText text={h.request} label={`Request of hop ${h.n}`} />
+          <p className="muted">Response</p><HopText text={h.response} label={`Response of hop ${h.n}`} />
         </details>
       ))}
     </section>
@@ -165,7 +178,7 @@ export default function PolicyGate({ story, resetSignal, requestedId, onSelect }
       <section className="panel" aria-labelledby="scen-h">
         <h2 id="scen-h">Scenario (decoded)</h2>
         <p className="tag tag--warn">{story.tokenLabel}</p>
-        <Json value={{ user: scenario.user, groups: scenario.groups, flipTo: scenario.flipTo, tool: scenario.tool, amount: scenario.amount, actor: scenario.actor, authorizedActors: scenario.authorizedActors, expected: scenario.expected }} label="Scenario input" testId="scenario-prefs" />
+        <Json value={{ user: scenario.user, groups: scenario.groups, flipTo: scenario.flipTo, tool: scenario.tool, amount: scenario.amount, actor: scenario.actor, authorizedActors: scenario.authorizedActors, expected: scenario.expected }} label="Scenario input" testId="scenario-prefs" hot={["tool", "amount", "actor", "authorizedActors", "flipTo", "expected"]} />
         <h3>What we know, and how well</h3>
         <ul className="facts" data-testid="facts">
           {story.facts.map((f) => <li key={f.id}><span className={STATUS_CLASS[f.status] || "tag"}>{f.status}</span> {visible(f.text)} <span className="muted">({visible(f.source)})</span></li>)}
