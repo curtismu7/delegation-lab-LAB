@@ -1,8 +1,10 @@
 import { describe, expect, it, beforeEach, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App, { BANNER_UNKNOWN } from "./App";
 import { labelOffsets } from "./components/PatternDiagram";
+import { setJsonView } from "./components/JsonPane";
+import { Hops } from "./components/PolicyGate";
 
 const STORY = {
   title: "t", intro: "intro text", banner: "SIMULATED: mock gate", tokenLabel: "MOCK policy decisions", hosted: false, verticals: ["retail", "health"],
@@ -189,5 +191,41 @@ describe("banner visibility on every tab, presenter mode and hosted mode", () =>
     render(<App />);
     await waitFor(() => expect(screen.getByTestId("banner")).toHaveTextContent(BANNER_UNKNOWN));
     expect(screen.getByTestId("banner")).toBeVisible();
+  });
+});
+
+describe("JSON panes (Rule 24)", () => {
+  // The Form | JSON choice is shared module state: set it, then assert the view the test means.
+  beforeEach(() => setJsonView("form"));
+  it("the scenario input is a Form | JSON pane with this lab's keys stood out, and never scrolls", async () => {
+    await ready();
+    const box = screen.getByTestId("scenario-prefs-box");
+    expect(box).toHaveAttribute("data-view", "form");
+    expect(screen.getByTestId("scenario-prefs-formatted")).toHaveTextContent("Form");
+    expect(screen.getByTestId("scenario-prefs-raw")).toHaveTextContent("JSON");
+    expect(box.querySelector('[data-hot="true"]')).not.toBeNull();
+    expect(screen.getByTestId("scenario-prefs")).toHaveTextContent("get_account_balance");
+    await userEvent.click(screen.getByTestId("scenario-prefs-raw"));
+    expect(box).toHaveAttribute("data-view", "raw");
+    expect(screen.getByTestId("scenario-prefs")).toHaveTextContent('"tool": "get_account_balance"');
+    expect(box.querySelector(".jtok--hot")).not.toBeNull();
+    expect(screen.getByTestId("scenario-prefs").style.maxHeight).toBe("");
+  });
+  it("a hop's JSON-RPC body goes through the pane; the HTTP headers and non-JSON hops stay text", () => {
+    const body = '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"create_wire_transfer","arguments":{"amount":900}}}';
+    const hops = [
+      { n: 1, label: "call", request: `POST https://gateway.example/mcp/tool\ncontent-type: application/json\n\n${body}`, response: "traceparent: 00-a-b-01" },
+      { n: 2, label: "validate", request: "validateToken(sub=demoUser)", response: "valid: ok" },
+    ];
+    render(<Hops hops={hops} traceId="t" />);
+    const paneBody = screen.getByLabelText("Request of hop 1, body");
+    expect(paneBody.closest(".jsonbox")).toHaveAttribute("data-view", "form");
+    expect(within(paneBody).getByText("tools/call")).toBeInTheDocument();
+    const headers = screen.getByLabelText("Request of hop 1, headers");
+    expect(headers.closest(".jsonbox")).toHaveAttribute("data-view", "text");
+    expect(headers).toHaveTextContent("POST https://gateway.example/mcp/tool");
+    expect(headers).not.toHaveTextContent("jsonrpc");
+    expect(screen.getByLabelText("Response of hop 1").closest(".jsonbox")).toHaveAttribute("data-view", "text");
+    expect(screen.getAllByRole("button", { name: "JSON" })).toHaveLength(1);
   });
 });
