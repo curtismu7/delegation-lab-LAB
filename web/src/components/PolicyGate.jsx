@@ -82,7 +82,7 @@ function AgentCall({ tools, onResult, user }) {
       </select>
       <label htmlFor="call-amount">Amount (USD, optional)</label>
       <input id="call-amount" type="number" min="0" max="1000000" value={amount} onChange={(e) => setAmount(e.target.value)} data-testid="call-amount" />
-      <button type="button" onClick={run} data-testid="call-run">Consent &amp; call as the agent</button>
+      <button type="button" className="primary" onClick={run} data-testid="call-run">Consent &amp; call as the agent</button>
       {fail && <p className="field-error" role="alert">{fail}</p>}
     </section>
   );
