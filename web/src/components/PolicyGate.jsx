@@ -23,6 +23,7 @@ export function Hops({ hops, traceId }) {
   return (
     <section aria-label="Mock hops with traceparent" data-testid="hops">
       <h3>Hops (W3C traceparent) <span className="muted">trace {traceId}</span></h3>
+      <div className="hops-grid">
       {hops.map((h) => (
         <details key={h.n} open={h.n === 1}>
           <summary>{h.n}. {h.label}</summary>
@@ -30,6 +31,7 @@ export function Hops({ hops, traceId }) {
           <p className="muted">Response</p><HopText text={h.response} label={`Response of hop ${h.n}`} />
         </details>
       ))}
+      </div>
     </section>
   );
 }
@@ -70,7 +72,7 @@ function AgentCall({ tools, onResult, user }) {
   };
   return (
     <section className="panel" aria-labelledby="call-h" data-testid="agent-call">
-      <h2 id="call-h">Call the tool as the agent</h2>
+      <h2 id="call-h"><span className="step-num" aria-hidden="true">3</span>Call the tool as the agent</h2>
       <p className="muted">One agent-originated tools/call: consent mints the delegated token, the gateway validates the chain, then the policy decides from the live directory.</p>
       <label htmlFor="call-user">Acting for (token sub)</label>
       <input id="call-user" type="text" maxLength={64} defaultValue={user} data-testid="call-user" />
@@ -106,7 +108,7 @@ function DirectoryBoard({ onChanged }) {
   };
   return (
     <section className="panel" aria-labelledby="dir-h" data-testid="directory-board">
-      <h2 id="dir-h">Live directory (UC9A)</h2>
+      <h2 id="dir-h"><span className="step-num" aria-hidden="true">4</span>Live directory (UC9A)</h2>
       <p className="muted">Membership is read on EVERY decision. Flip it and the very next call moves — no code change, no cache, no re-login. The flips are per workspace.</p>
       <label htmlFor="dir-user">User</label>
       <input id="dir-user" type="text" maxLength={64} value={user} onChange={(e) => setUser(e.target.value)} data-testid="dir-user" />
@@ -161,22 +163,24 @@ export default function PolicyGate({ story, resetSignal, requestedId, onSelect }
   return (
     <div className="gate">
       <section className="panel" aria-labelledby="sc-h">
-        <h2 id="sc-h">Scenarios</h2>
+        <h2 id="sc-h"><span className="step-num" aria-hidden="true">1</span>Scenarios</h2>
         <div className="seg" role="group" aria-label="Scenario">
           {story.scenarios.map((s) => <button key={s.id} type="button" aria-pressed={s.id === id} onClick={() => { setId(s.id); if (onSelect) onSelect(s.id); }}>{s.title}</button>)}
         </div>
         <p className="lesson" data-testid="lesson">{scenario.lesson}</p>
       </section>
       <section className="panel" aria-labelledby="res-h">
-        <h2 id="res-h">Decision</h2>
+        <h2 id="res-h"><span className="step-num" aria-hidden="true">2</span>Decision</h2>
         {fail && <p className="field-error" role="alert">{fail}</p>}
         <Verdict run={run} />
         {run && <Hops hops={run.hops} traceId={run.traceId} />}
       </section>
-      <AgentCall tools={story.tools} onResult={(r) => setRun(r)} user="demoUser" />
-      <DirectoryBoard onChanged={() => {}} />
+      <div className="duo">
+        <AgentCall tools={story.tools} onResult={(r) => setRun(r)} user="demoUser" />
+        <DirectoryBoard onChanged={() => {}} />
+      </div>
       <section className="panel" aria-labelledby="scen-h">
-        <h2 id="scen-h">Scenario (decoded)</h2>
+        <h2 id="scen-h"><span className="step-num" aria-hidden="true">5</span>Scenario (decoded)</h2>
         <p className="tag tag--warn">{story.tokenLabel}</p>
         <Json value={{ user: scenario.user, groups: scenario.groups, flipTo: scenario.flipTo, tool: scenario.tool, amount: scenario.amount, actor: scenario.actor, authorizedActors: scenario.authorizedActors, expected: scenario.expected }} label="Scenario input" testId="scenario-prefs" hot={["tool", "amount", "actor", "authorizedActors", "flipTo", "expected"]} />
         <h3>What we know, and how well</h3>
