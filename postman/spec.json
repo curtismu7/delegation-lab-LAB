@@ -1,0 +1,112 @@
+{
+  "name": "Delegation Lab",
+  "slug": "delegation-lab",
+  "description": "API collection for Delegation Lab: the consent-delegation story against in-process mocks. Read the directory (users, groups, the demo agent), mint a delegated token via consent, gate an MCP tool call with it (tier ceilings, actor allowlists, group entitlements), and browse the decision runs. The lab is a labelled simulation; there is no live mode.",
+  "baseUrl": "http://localhost:7690",
+  "env": {},
+  "variables": {
+    "DELEGATED_TOKEN": "filled by the Consent request's test script"
+  },
+  "folders": [
+    {
+      "name": "Sanity (simulated, labelled)",
+      "description": "Health, mode info, scenario catalog and the identity directory.",
+      "requests": [
+        {
+          "name": "Health",
+          "method": "GET",
+          "path": "/api/health",
+          "tests": [
+            "pm.response.to.have.status(200);",
+            "pm.expect(pm.response.json().state).to.eql('ready');"
+          ]
+        },
+        {
+          "name": "Info",
+          "method": "GET",
+          "path": "/api/info",
+          "tests": [
+            "pm.response.to.have.status(200);"
+          ]
+        },
+        {
+          "name": "Scenario catalog",
+          "method": "GET",
+          "path": "/api/scenarios",
+          "tests": [
+            "pm.response.to.have.status(200);",
+            "pm.expect(pm.response.json().scenarios.length).to.be.above(0);"
+          ]
+        },
+        {
+          "name": "Directory",
+          "method": "GET",
+          "path": "/api/directory",
+          "tests": [
+            "pm.response.to.have.status(200);",
+            "pm.expect(pm.response.json().groups).to.have.property('demoUser');"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Consent and tool gate",
+      "description": "Mint the delegated token (consent), then call the tool gate with it. The token object is chained into the tool call via the DELEGATED_TOKEN collection variable. Runs accumulate in /api/runs; flip a directory group or reset to change outcomes.",
+      "requests": [
+        {
+          "name": "Consent: mint a delegated token",
+          "method": "POST",
+          "path": "/api/consent",
+          "body": {},
+          "tests": [
+            "pm.response.to.have.status(200);",
+            "pm.expect(pm.response.json().token).to.have.property('act');",
+            "pm.collectionVariables.set('DELEGATED_TOKEN', JSON.stringify(pm.response.json().token));"
+          ]
+        },
+        {
+          "name": "Tool call without a token (negative)",
+          "method": "POST",
+          "path": "/api/tool",
+          "body": {},
+          "tests": [
+            "pm.expect(pm.response.code).to.eql(400);",
+            "pm.expect(pm.response.json().error).to.eql('token_required');"
+          ]
+        },
+        {
+          "name": "Tool call with the delegated token (PERMIT, Standard ceiling)",
+          "method": "POST",
+          "path": "/api/tool",
+          "tests": [
+            "pm.response.to.have.status(200);",
+            "pm.expect(pm.response.json().decision).to.eql('PERMIT');"
+          ],
+          "rawBody": "{\"token\": {{DELEGATED_TOKEN}}}",
+          "prerequest": [
+            "const t = pm.collectionVariables.get('DELEGATED_TOKEN');",
+            "pm.collectionVariables.set('DELEGATED_TOKEN', t);"
+          ]
+        },
+        {
+          "name": "Decision runs",
+          "method": "GET",
+          "path": "/api/runs",
+          "tests": [
+            "pm.response.to.have.status(200);",
+            "pm.expect(pm.response.json().runs).to.be.an('array');"
+          ]
+        },
+        {
+          "name": "Reset",
+          "method": "POST",
+          "path": "/api/reset",
+          "body": {},
+          "tests": [
+            "pm.response.to.have.status(200);"
+          ]
+        }
+      ]
+    }
+  ]
+}

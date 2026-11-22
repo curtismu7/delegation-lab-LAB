@@ -76,3 +76,12 @@ If the port is taken:
 - Workspaces: every visitor carries an `X-Workspace` id; Reset clears only that workspace.
 
 Safety: loopback Host check (+ `LAB_ALLOWED_HOSTS` behind the lab-proxy), same-origin writes, no outbound network, bounded payloads, `nosniff`, read-only container fs, non-root. The demo OTP and every decision value are labelled demo values. See `docs/safety.md` and `docs/talk-track.md` (generated from the same data the UI reads).
+
+## Postman collection
+
+`postman/delegation-lab.postman_collection.json` drives the story without the UI: directory and scenarios, consent (mints the delegated token and chains it into the gate), the tokenless negative, a permitted tool call (Standard tier ceiling), decision runs and reset. It needs no environment — everything is an in-process labelled simulation.
+
+```
+node ../../shared/postman/generator.mjs --spec postman/spec.json            # regenerate (never hand-edit the output)
+npx newman run postman/delegation-lab.postman_collection.json
+```
