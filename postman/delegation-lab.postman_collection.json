@@ -3,7 +3,7 @@
     "name": "Delegation Lab",
     "description": "API collection for Delegation Lab: the consent-delegation story against in-process mocks. Read the directory (users, groups, the demo agent), mint a delegated token via consent, gate an MCP tool call with it (tier ceilings, actor allowlists, group entitlements), and browse the decision runs. The lab is a labelled simulation; there is no live mode.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_postman_id": "4a50ef5f-8e61-435d-887f-e6a791caefef"
+    "_postman_id": "postman-delegation-lab"
   },
   "item": [
     {
