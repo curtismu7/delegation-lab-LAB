@@ -94,6 +94,7 @@ export default function App() {
           ))}
         </nav>
         <TopMenu
+          postman={{ repo: "curtismu7/delegation-lab-LAB", slug: "delegation-lab" }}
           mode={{ value: info?.mode === "real" ? "real" : "mock", onChange: switchMode, realAvailable: info?.realAvailable ?? null, realHint: "Real is owner-run and RESERVED in this build: the toggle reports it, the live-gateway data path is not wired yet." }}
           vertical={{ value: vertical, onChange: setVertical, options: story ? story.verticals : ["retail"] }}
           present={{ active: presenter, onToggle: () => setPresenter((v) => !v) }}
