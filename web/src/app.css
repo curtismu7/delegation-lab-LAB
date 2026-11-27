@@ -25,7 +25,7 @@ button { font: inherit; font-size: var(--font-size-sm); padding: 6px 12px; borde
 button:not(.primary):hover { background: var(--th-bg-hover); }
 button:focus-visible { outline: 2px solid var(--th-status-info); outline-offset: 2px; }
 .track { margin: 8px 0; }
-.track__list { list-style: none; display: flex; gap: 8px; padding: 0; margin: 0; flex-wrap: wrap; }
+.track__list { list-style: none; display: flex; gap: 10px 8px; padding: 0; margin: 8px 0; flex-wrap: wrap; }
 .track__list button b { color: var(--th-accent); margin-right: 4px; }
 .track__now { border: 1px solid var(--th-status-info); background: var(--th-status-info-bg); border-radius: var(--radius-md); padding: 10px 14px; }
 .track__now h2, .track__now h3 { margin: 0 0 4px; font-size: var(--font-size-base); color: var(--th-status-info-text); }
@@ -42,8 +42,12 @@ button:focus-visible { outline: 2px solid var(--th-status-info); outline-offset:
 select, textarea { font: inherit; font-size: var(--font-size-sm); color: var(--th-text); background: var(--th-bg-card); border: 1px solid var(--th-border-strong); border-radius: var(--radius-md); padding: 6px 8px; }
 textarea { width: 100%; font-family: var(--font-mono); display: block; margin: 4px 0 10px; }
 select:focus-visible, textarea:focus-visible, summary:focus-visible, pre:focus-visible { outline: 2px solid var(--th-status-info); outline-offset: 2px; }
-label { display: block; font-size: var(--font-size-sm); font-weight: 600; margin-top: 6px; }
-label.inline { display: inline-flex; margin-top: 0; font-weight: 400; }
+label { display: block; font-size: var(--font-size-sm); font-weight: 600; margin: 10px 0 4px; }
+label.inline { display: inline-flex; margin: 0; font-weight: 400; }
+label + input, label + select { margin-top: 0; }
+.panel input, .panel select { display: block; margin: 0 0 2px; }
+.panel .seg { margin-top: 10px; }
+.panel button.primary { margin-top: 12px; }
 .posture { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); align-items: start; }
 .gate { display: flex; flex-direction: column; gap: 12px; }
 .gate > .panel { min-width: 0; }
