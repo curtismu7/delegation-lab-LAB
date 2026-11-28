@@ -126,7 +126,7 @@ function DirectoryBoard({ onChanged }) {
   );
 }
 
-export default function PolicyGate({ story, resetSignal, requestedId, onSelect }) {
+export default function PolicyGate({ story, resetSignal, requestedId, onSelect, onRun = null }) {
   const known = (v) => story.scenarios.some((s) => s.id === v);
   const [id, setId] = useState(known(requestedId) ? requestedId : story.scenarios[0].id);
   useEffect(() => { if (known(requestedId)) setId(requestedId); }, [requestedId]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -154,10 +154,10 @@ export default function PolicyGate({ story, resetSignal, requestedId, onSelect }
     if (sc.amount != null) payload.amount = sc.amount;
     const res = await runTool(payload).catch(() => ({ ok: false, status: 0, body: {} }));
     if (drop()) return;
-    if (res.body.decision) setRun(res.body); else { setRun(null); setFail(`Could not evaluate (${res.body.detail || res.body.error || res.status}).`); }
-  }, [story]);
+    if (res.body.decision) { setRun(res.body); onRun?.(res.body); } else { setRun(null); onRun?.(null); setFail(`Could not evaluate (${res.body.detail || res.body.error || res.status}).`); }
+  }, [story, onRun]);
 
-  useEffect(() => { setRun(null); }, [resetSignal]);
+  useEffect(() => { setRun(null); onRun?.(null); }, [resetSignal]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { runScenario(id); }, [id, resetSignal, runScenario]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -176,7 +176,7 @@ export default function PolicyGate({ story, resetSignal, requestedId, onSelect }
         {run && <Hops hops={run.hops} traceId={run.traceId} />}
       </section>
       <div className="duo">
-        <AgentCall tools={story.tools} onResult={(r) => setRun(r)} user="demoUser" />
+        <AgentCall tools={story.tools} onResult={(r) => { setRun(r); onRun?.(r); }} user="demoUser" />
         <DirectoryBoard onChanged={() => {}} />
       </div>
       <section className="panel" aria-labelledby="scen-h">
