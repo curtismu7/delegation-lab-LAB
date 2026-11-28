@@ -38,6 +38,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const [tab, setTab] = useState(hashParts().tab);
   const [requested, setRequested] = useState(() => hashParts().scenario || scenarioFor(handoff));
+  const [lastRun, setLastRun] = useState(null); // the gate tab's last run; the diagram tab shows its hops in the expanded boxes
   const [presenter, setPresenter] = useState(false);
   const [resetSignal, setResetSignal] = useState(0);
   const [resetMsg, setResetMsg] = useState("");
@@ -122,8 +123,8 @@ export default function App() {
                   {story.talkTrack.filter((t) => (tab === "gate" ? ["say-first", "consent", "gateway", "group", "tier", "unverified"] : ["say-first"]).includes(t.id)).map((t) => <p key={t.id}><strong>{t.title}.</strong> {t.say}</p>)}
                 </aside>
               )}
-              {tab === "gate" && <PolicyGate key={vertical} story={story} resetSignal={resetSignal} requestedId={requested} onSelect={pickScenario} />}
-              {tab === "diagram" && <DiagramTab vertical={vertical} resetSignal={resetSignal} />}
+              {tab === "gate" && <PolicyGate key={vertical} story={story} resetSignal={resetSignal} requestedId={requested} onSelect={pickScenario} onRun={setLastRun} />}
+              {tab === "diagram" && <DiagramTab vertical={vertical} resetSignal={resetSignal} run={lastRun} />}
               {tab === "talk" && <TalkTrack talk={story.talkTrack} />}
             </>
           )}
