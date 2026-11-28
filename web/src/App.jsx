@@ -3,6 +3,7 @@ import PolicyGate from "./components/PolicyGate";
 import DiagramTab from "./components/DiagramTab";
 import TalkTrack from "./components/TalkTrack";
 import HelpDialog from "./help-dialog/HelpDialog";
+import ModeModal from "./mode-modal/ModeModal";
 import { HELP_SECTIONS } from "./helpContent";
 import ShelfLink from "./components/ShelfLink";
 import VerifyMark from "./components/VerifyMark.jsx";
@@ -17,12 +18,15 @@ export const TABS = [
   { id: "diagram", label: "Diagram" },
   { id: "talk", label: "Talk track" },
 ];
-// The banner is never blank and never claims "not hosted" before it knows: until /api/info or /api/scenarios answers (or if both fail)
-// it says both, honestly.
+// The Real-or-mock modal's lines (it replaced the simulation banner). It never claims "not hosted" before it knows: until /api/info or /api/scenarios
+// answers (or if both fail) it says MOCK with the "not known" line. Hosted is Mock only and has its own Mock line. Real is reserved in this build.
 const TAIL = "Nothing here calls a real gateway, identity provider or tenant.";
-export const BANNER_UNKNOWN = `SIMULATED / HOSTED SIMULATION: a mock delegated token chain, a mock gateway policy and a mock entitlement directory. ${TAIL}`;
-const BANNER_LOCAL = `SIMULATED: a mock delegated token chain, a mock gateway policy and a mock entitlement directory. ${TAIL}`;
-const BANNER_HOSTED = `HOSTED SIMULATION: a mock delegated token chain, a mock gateway policy and a mock entitlement directory. ${TAIL}`;
+export const MODE_LINES = {
+  unknown: `Simulated, and possibly the hosted copy: the server has not said yet. A mock delegated token chain, a mock gateway policy and a mock entitlement directory. ${TAIL}`,
+  mock: `Simulated: a mock delegated token chain, a mock gateway policy and a mock entitlement directory. ${TAIL}`,
+  hosted: `Hosted simulation: a mock delegated token chain, a mock gateway policy and a mock entitlement directory. ${TAIL}`,
+  real: "Real is configured, but this build has no live-gateway data path yet: every run is still the mock delegated token chain, mock gateway policy and mock entitlement directory.",
+};
 
 const hashParts = () => {
   const h = window.location.hash.replace("#", "");
@@ -80,7 +84,7 @@ export default function App() {
   }, [info]);
 
   const hosted = story ? !!story.hosted : info ? !!info.hosted : null;
-  const banner = story ? story.banner : hosted === true ? BANNER_HOSTED : hosted === false ? BANNER_LOCAL : BANNER_UNKNOWN;
+  const modeLines = { mock: hosted === true ? MODE_LINES.hosted : hosted === false ? MODE_LINES.mock : MODE_LINES.unknown, real: MODE_LINES.real };
   return (
     <div className={`app${presenter ? " app--presenter" : ""}`}>
       <header className="shell-bar">
@@ -113,7 +117,6 @@ export default function App() {
         </TopMenu>
       </header>
       <main className="page">
-        <p className="banner" role="status" data-testid="banner">{banner}</p>
         <ReturnLink app="delegation-lab" />
         {error && <p className="app-error" role="alert">Could not load the lab ({error}). Is the server running?</p>}
         <p className="sr-only" role="status" aria-live="polite">{resetMsg}</p>
@@ -133,6 +136,7 @@ export default function App() {
           )}
         </div>
       </main>
+      <ModeModal mode={info?.mode === "real" ? "real" : "mock"} lines={modeLines} storageKey="dl-mode" />
       <HelpDialog isOpen={helpOpen} onClose={() => setHelpOpen(false)} sections={HELP_SECTIONS} docsUrl="https://github.com/curtismu7/delegation-lab-LAB#readme" />
     </div>
   );

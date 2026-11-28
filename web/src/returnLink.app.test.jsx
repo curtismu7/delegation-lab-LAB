@@ -44,14 +44,14 @@ describe("hand-off from Customer Agent LAB", () => {
     expect(verticalFor({ vertical: "constructor" })).toBeNull();
   });
 
-  it("UC9A in banking: banner first, strip right below, header Back; live-flip and finance are preselected", async () => {
+  it("UC9A in banking: the strip is first in the page, header Back; live-flip and finance are preselected", async () => {
     window.history.replaceState(null, "", "/?from=customer-agent&uc=UC9A&vertical=banking");
     render(<App />);
     const note = screen.getByRole("note", NOTE);
     expect(note.textContent).toContain("UC9A");
-    expect(screen.getByTestId("banner").nextElementSibling).toBe(note);
+    expect(screen.queryByTestId("banner")).toBeNull();
     expect(document.querySelector("header.shell-bar .shell-right button.return-link--header")).not.toBeNull(); // header Back in the shell bar TopMenu
-    expect(document.querySelector("main").firstElementChild).toBe(screen.getByTestId("banner")); // shell bar first, then main with the banner first
+    expect(document.querySelector("main").firstElementChild).toBe(note); // shell bar first, then main with the hand-off strip first (the banner is gone)
     expect(screen.getAllByRole("button", { name: /Back to Customer Agent LAB/ })).toHaveLength(2);
     await waitFor(() => expect(screen.getByTestId("pg").textContent).toBe("live-flip"));
     expect(calls).toContain("/api/scenarios?vertical=finance");
